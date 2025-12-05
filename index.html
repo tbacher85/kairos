@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kairos | Premium Booking for Elite Consultants</title>
+    <title>Kairos Beta | Premium Booking for Elite Consultants</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
     <style>
         /* ===== CSS RESET & VARIABLES ===== */
         :root {
             --color-primary: #0f172a;
             --color-primary-dark: #020617;
-            --color-accent: #8b5cf6;
-            --color-accent-light: #a78bfa;
+            --color-accent: #7c3aed;
+            --color-accent-light: #8b5cf6;
             --color-secondary: #f59e0b;
             --color-success: #10b981;
             --color-danger: #ef4444;
+            --color-info: #3b82f6;
             --color-light: #f8fafc;
             --color-dark: #1e293b;
             --color-border: #e2e8f0;
@@ -26,10 +26,13 @@
             --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             --shadow-elevated: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --border-radius-sm: 8px;
+            --shadow-deep: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --border-radius-sm: 10px;
             --border-radius: 16px;
             --border-radius-lg: 24px;
+            --border-radius-xl: 32px;
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Space Grotesk', 'Inter', sans-serif;
         }
 
         * {
@@ -72,32 +75,22 @@
                 font-size: 1.1rem !important;
             }
             
-            .content-wrapper {
+            .demo-modal-grid {
                 grid-template-columns: 1fr !important;
-                gap: 2rem !important;
             }
             
-            .social-proof-banner {
-                flex-direction: column;
-                gap: 1.5rem;
-                padding: 1.5rem;
+            .demo-controls {
+                order: 2;
+                margin-top: 2rem;
             }
             
-            .session-types {
-                grid-template-columns: repeat(2, 1fr) !important;
+            .demo-preview {
+                order: 1;
+                height: 500px !important;
             }
             
-            .calendar-grid {
-                gap: 0.25rem !important;
-            }
-            
-            .calendar-day {
-                font-size: 0.9rem;
-                padding: 0.5rem;
-            }
-            
-            .time-slots {
-                grid-template-columns: repeat(2, 1fr) !important;
+            .session-types-grid {
+                grid-template-columns: 1fr !important;
             }
             
             .modal-content {
@@ -108,10 +101,6 @@
             
             .modal-body {
                 padding: 1rem !important;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr !important;
             }
         }
 
@@ -126,21 +115,18 @@
                 font-size: 2rem !important;
             }
             
-            .session-types {
-                grid-template-columns: 1fr !important;
-            }
-            
-            .time-slots {
-                grid-template-columns: 1fr !important;
-            }
-            
-            .calendar-grid {
-                grid-template-columns: repeat(7, 1fr) !important;
-            }
-            
-            .value-banner {
+            .beta-stats {
                 flex-direction: column !important;
                 gap: 1rem !important;
+            }
+            
+            .price-controls {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+            
+            .price-buttons {
+                margin-top: 0.5rem;
             }
         }
 
@@ -149,20 +135,11 @@
             color: var(--color-primary);
             font-weight: 700;
             line-height: 1.2;
+            font-family: var(--font-display);
         }
 
         p {
             margin-bottom: 1rem;
-        }
-
-        a {
-            color: var(--color-accent);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        a:hover {
-            color: var(--color-accent-light);
         }
 
         .text-center {
@@ -187,6 +164,27 @@
         .gap-4 { gap: 1rem; }
         .w-full { width: 100%; }
 
+        /* ===== ANIMATIONS ===== */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.5); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         /* ===== BUTTONS ===== */
         .btn {
             display: inline-flex;
@@ -197,38 +195,69 @@
             font-size: 1rem;
             font-weight: 600;
             border: none;
-            border-radius: var(--border-radius-sm);
+            border-radius: var(--border-radius);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
             font-family: var(--font-sans);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
             color: white;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
+            animation: glow 2s infinite;
         }
 
         .btn-secondary {
             background: transparent;
             color: var(--color-accent);
             border: 2px solid var(--color-accent);
+            backdrop-filter: blur(10px);
         }
 
         .btn-secondary:hover {
-            background: rgba(139, 92, 246, 0.05);
+            background: rgba(124, 58, 237, 0.05);
             border-color: var(--color-accent-light);
+            transform: translateY(-2px);
         }
 
         .btn-lg {
-            padding: 1.25rem 2.5rem;
+            padding: 1.25rem 3rem;
             font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .btn-xl {
+            padding: 1.5rem 4rem;
+            font-size: 1.2rem;
+            font-weight: 700;
         }
 
         .btn-full {
@@ -244,9 +273,9 @@
             position: sticky;
             top: 0;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px);
             z-index: 1000;
-            border-bottom: 1px solid var(--color-border);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
         }
 
         .logo-container {
@@ -263,7 +292,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            animation: float 6s ease-in-out infinite;
         }
 
         .logo-icon i {
@@ -277,14 +307,14 @@
         }
 
         .logo {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 900;
             letter-spacing: -0.5px;
             color: var(--color-primary);
-        }
-
-        .logo .accent {
-            color: var(--color-accent);
+            font-family: var(--font-display);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .tagline {
@@ -298,38 +328,67 @@
         /* ===== HERO SECTION ===== */
         .hero {
             text-align: center;
-            padding: 4rem 0 3rem;
+            padding: 6rem 0 4rem;
             position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, rgba(124, 58, 237, 0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0) 70%);
+            border-radius: 50%;
+            z-index: -1;
         }
 
         .hero-badge {
             background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
             color: white;
             display: inline-block;
-            padding: 0.5rem 1.5rem;
-            border-radius: 20px;
+            padding: 0.75rem 2rem;
+            border-radius: 100px;
             font-weight: 600;
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+            animation: pulse 2s infinite;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 900;
             line-height: 1.1;
             margin-bottom: 1.5rem;
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 50%, var(--color-primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
         }
 
         .hero-subtitle {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: var(--color-text-muted);
             max-width: 700px;
             margin: 0 auto 2rem;
             line-height: 1.5;
+            font-weight: 400;
         }
 
         .hero-actions {
@@ -340,726 +399,255 @@
             margin-top: 2rem;
         }
 
-        /* ===== VALUE BANNER ===== */
-        .value-banner {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-medium);
-            margin: 2rem auto;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            border: 1px solid var(--color-border);
-        }
-
-        .value-item {
-            text-align: center;
-            flex: 1;
-            min-width: 150px;
-        }
-
-        .value-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--color-primary);
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .value-label {
-            color: var(--color-text-muted);
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* ===== SOCIAL PROOF BANNER ===== */
-        .social-proof-banner {
-            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-            border-radius: var(--border-radius);
-            padding: 2rem;
+        /* ===== BETA OFFER CARD ===== */
+        .beta-offer-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+            border-radius: var(--border-radius-xl);
+            padding: 3rem;
+            box-shadow: var(--shadow-deep);
             margin: 3rem auto;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            border: 1px solid #bae6fd;
-        }
-
-        .social-proof-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .social-proof-item i {
-            color: var(--color-success);
-            font-size: 1.2rem;
-        }
-
-        /* ===== MAIN CONTENT LAYOUT ===== */
-        .content-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: start;
-            margin: 3rem 0;
-        }
-
-        /* ===== WAITLIST FORM ===== */
-        .waitlist-section {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 2.5rem;
-            box-shadow: var(--shadow-elevated);
-            position: sticky;
-            top: 6rem;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            color: var(--color-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .section-subtitle {
-            color: var(--color-text-muted);
-            margin-bottom: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--color-dark);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 1rem;
-            border: 1px solid var(--color-border);
-            border-radius: var(--border-radius-sm);
-            font-size: 1rem;
-            font-family: var(--font-sans);
-            transition: all 0.3s;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-        }
-
-        .select-wrapper {
+            border: 1px solid rgba(255, 255, 255, 0.3);
             position: relative;
+            overflow: hidden;
+            max-width: 800px;
+            backdrop-filter: blur(20px);
         }
 
-        .select-wrapper i {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--color-text-muted);
-            pointer-events: none;
-        }
-
-        /* ===== FEATURES GRID ===== */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .feature-card {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            box-shadow: var(--shadow-medium);
-            border: 1px solid var(--color-border);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-elevated);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .feature-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-        .feature-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
-        .feature-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .feature-icon.blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-
-        /* ===== DEMO PREVIEW ===== */
-        .demo-preview {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            box-shadow: var(--shadow-elevated);
-            height: 100%;
-        }
-
-        .demo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .demo-title {
-            font-size: 1.5rem;
-            color: var(--color-primary);
-            font-weight: 700;
-        }
-
-        .demo-badge {
-            background: var(--color-success);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .demo-placeholder {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            border-radius: var(--border-radius);
-            height: 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--color-text-muted);
-            text-align: center;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .demo-placeholder i {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            opacity: 0.5;
-        }
-
-        .demo-features {
-            list-style: none;
-        }
-
-        .demo-features li {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            padding: 0.75rem;
-            background: var(--color-light);
-            border-radius: var(--border-radius-sm);
-        }
-
-        .demo-features i {
-            color: var(--color-success);
-        }
-
-        /* ===== ENHANCED CALENDAR STYLES ===== */
-        .calendar-simulation {
-            background: white;
-            border: 1px solid var(--color-border);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .calendar-nav-btn {
-            background: none;
-            border: 1px solid var(--color-border);
-            border-radius: 6px;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--color-primary);
-            transition: all 0.2s;
-        }
-
-        .calendar-nav-btn:hover {
-            border-color: var(--color-accent);
-            color: var(--color-accent);
-        }
-
-        .calendar-month {
-            font-weight: 600;
-            color: var(--color-primary);
-            font-size: 1.2rem;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .calendar-day-header {
-            text-align: center;
-            font-weight: 600;
-            color: var(--color-text-muted);
-            font-size: 0.85rem;
-            padding: 0.5rem 0;
-            text-transform: uppercase;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            position: relative;
-            padding: 0.5rem;
-        }
-
-        .calendar-day:hover:not(.past):not(.booked):not(.other-month) {
-            background: var(--color-light);
-            transform: scale(1.05);
-        }
-
-        .calendar-day.today {
-            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
-            color: white !important;
-            font-weight: 700;
-        }
-
-        .calendar-day.past {
-            color: #94a3b8;
-            cursor: not-allowed;
-            background: #f1f5f9;
-        }
-
-        .calendar-day.available {
-            background: linear-gradient(135deg, var(--color-success), #059669);
-            color: white;
-            font-weight: 600;
-        }
-
-        .calendar-day.booked {
-            background: #fef2f2;
-            color: var(--color-danger);
-            text-decoration: line-through;
-            cursor: not-allowed;
-        }
-
-        .calendar-day.limited {
-            background: linear-gradient(135deg, var(--color-secondary), #d97706);
-            color: white;
-            font-weight: 600;
-        }
-
-        .calendar-day.other-month {
-            color: var(--color-border);
-            background: transparent;
-            cursor: default;
-        }
-
-        .calendar-day .day-number {
-            font-size: 1.1rem;
-            font-weight: 600;
-            z-index: 2;
-        }
-
-        .calendar-day .day-status {
-            font-size: 0.7rem;
-            margin-top: 0.25rem;
-            z-index: 2;
-        }
-
-        .calendar-day.available:hover,
-        .calendar-day.limited:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .calendar-legend {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-        }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .legend-color.available { background: var(--color-success); }
-        .legend-color.booked { background: var(--color-danger); }
-        .legend-color.limited { background: var(--color-secondary); }
-        .legend-color.today { background: var(--color-accent); }
-
-        /* ===== TIME SLOTS ===== */
-        .time-slots {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-        }
-
-        .time-slot {
-            padding: 0.75rem;
-            border: 1px solid var(--color-border);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .time-slot:hover:not(.booked) {
-            border-color: var(--color-accent);
-            background: rgba(139, 92, 246, 0.05);
-        }
-
-        .time-slot.selected {
-            background: var(--color-accent);
-            color: white;
-            border-color: var(--color-accent);
-        }
-
-        .time-slot.booked {
-            background: var(--color-light);
-            color: var(--color-text-muted);
-            cursor: not-allowed;
-            text-decoration: line-through;
-        }
-
-        /* ===== SESSION TYPES ===== */
-        .session-types {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .session-type {
-            border: 2px solid var(--color-border);
-            border-radius: 12px;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .session-type:hover {
-            border-color: var(--color-accent);
-            transform: translateY(-2px);
-        }
-
-        .session-type.selected {
-            border-color: var(--color-accent);
-            background: rgba(139, 92, 246, 0.05);
-            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.1);
-        }
-
-        .session-type.featured {
-            border-width: 3px;
-        }
-
-        .session-badge {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: var(--color-success);
-            color: white;
-            font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        .session-badge.popular {
-            background: var(--color-accent);
-        }
-
-        .session-price {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--color-primary);
-            margin: 0.5rem 0;
-        }
-
-        .session-price.free {
-            color: var(--color-success);
-        }
-
-        .session-duration {
-            font-size: 0.9rem;
-            color: var(--color-text-muted);
-        }
-
-        /* ===== CUSTOMIZATION OPTIONS ===== */
-        .customization-preview {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid var(--color-border);
-        }
-
-        .preview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .customization-option {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px solid var(--color-border);
-        }
-
-        .option-toggle {
-            width: 44px;
-            height: 24px;
-            background: var(--color-border);
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.3s;
-            flex-shrink: 0;
-        }
-
-        .option-toggle.active {
-            background: var(--color-success);
-        }
-
-        .option-toggle::after {
+        .beta-offer-card::before {
             content: '';
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .option-toggle.active::after {
-            transform: translateX(20px);
-        }
-
-        /* ===== DEMO NOTICE ===== */
-        .demo-notice {
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-            border: 1px solid #fcd34d;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-            text-align: center;
-        }
-
-        .demo-notice-icon {
-            font-size: 2rem;
-            color: #d97706;
-            margin-bottom: 1rem;
-        }
-
-        /* ===== DEMO STEPS ===== */
-        .demo-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .demo-steps::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 10%;
-            right: 10%;
-            height: 2px;
-            background: var(--color-border);
-            z-index: 1;
-        }
-
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-            flex: 1;
-        }
-
-        .step-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--color-light);
-            border: 2px solid var(--color-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--color-text-muted);
-            transition: all 0.3s;
-        }
-
-        .step.active .step-icon {
-            background: var(--color-accent);
-            border-color: var(--color-accent);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .step-label {
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-        }
-
-        .step.active .step-label {
-            color: var(--color-primary);
-            font-weight: 600;
-        }
-
-        /* ===== MODAL STYLES ===== */
-        .modal {
-            display: none;
-            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            overflow-y: auto;
-            padding: 2rem 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light), var(--color-success));
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
         }
 
-        .modal-content {
-            background: white;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-elevated);
-            animation: modalSlideIn 0.3s ease-out;
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
-        @keyframes modalSlideIn {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .price-tag {
+            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+            color: white;
+            font-size: 4rem;
+            font-weight: 900;
+            padding: 1.5rem 3rem;
+            border-radius: var(--border-radius-lg);
+            display: inline-block;
+            margin: 1rem 0;
+            box-shadow: 0 20px 40px rgba(124, 58, 237, 0.3);
+            font-family: var(--font-display);
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes modalSlideOut {
-            from { transform: translateY(0); opacity: 1; }
-            to { transform: translateY(-30px); opacity: 0; }
+        .price-tag::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
         }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--color-border);
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
-        .modal-title {
-            font-size: 1.5rem;
-            color: var(--color-primary);
-            font-weight: 700;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
+        .original-price {
+            text-decoration: line-through;
             color: var(--color-text-muted);
-            transition: color 0.3s;
-            width: 40px;
-            height: 40px;
+            font-size: 1.8rem;
+            margin-left: 1rem;
+            opacity: 0.7;
+        }
+
+        .beta-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--color-accent);
+            line-height: 1;
+            font-family: var(--font-display);
+            text-shadow: 0 5px 15px rgba(124, 58, 237, 0.2);
+        }
+
+        .stat-label {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== GUARANTEE BADGE ===== */
+        .guarantee-badge {
+            background: linear-gradient(135deg, var(--color-success), #059669);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: var(--border-radius);
+            display: inline-flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            animation: slideIn 0.6s ease-out;
+        }
+
+        /* ===== KOFI BUTTON STYLING ===== */
+        .kofi-button {
+            background: linear-gradient(135deg, #29abe0, #1e8bb8) !important;
+            color: white !important;
+            border: none !important;
+            padding: 1.5rem 4rem !important;
+            font-size: 1.2rem !important;
+            font-weight: 700 !important;
+            border-radius: var(--border-radius) !important;
+            cursor: pointer !important;
+            transition: all 0.3s !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 1rem !important;
+            text-decoration: none !important;
+            box-shadow: 0 15px 35px rgba(41, 171, 224, 0.3) !important;
+            font-family: var(--font-sans) !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        .kofi-button:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 20px 40px rgba(41, 171, 224, 0.4) !important;
+        }
+
+        /* ===== BENEFITS GRID ===== */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .benefit-card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: 2.5rem 2rem;
+            box-shadow: var(--shadow-elevated);
+            border: 1px solid var(--color-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-deep);
+        }
+
+        .benefit-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .benefit-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            color: white;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
         }
 
-        .modal-close:hover {
-            color: var(--color-danger);
-            background: #fef2f2;
+        /* ===== TESTIMONIALS ===== */
+        .testimonials {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: var(--border-radius-xl);
+            padding: 4rem;
+            margin: 4rem auto;
+            max-width: 900px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            position: relative;
+            overflow: hidden;
         }
 
-        .modal-body {
-            padding: 2rem;
+        .testimonial {
+            text-align: center;
+            font-style: italic;
+            color: var(--color-text);
+            font-size: 1.2rem;
+            line-height: 1.7;
+            position: relative;
         }
 
-        .demo-step-content {
-            min-height: 400px;
+        .testimonial::before {
+            content: '"';
+            font-size: 6rem;
+            color: var(--color-accent);
+            opacity: 0.1;
+            position: absolute;
+            top: -30px;
+            left: -10px;
+            font-family: serif;
+        }
+
+        .testimonial-author {
+            margin-top: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            font-size: 1.1rem;
+        }
+
+        /* ===== DEMO SECTION ===== */
+        .demo-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+            border-radius: var(--border-radius-xl);
+            padding: 4rem;
+            margin: 4rem 0;
+            box-shadow: var(--shadow-deep);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
         }
 
         /* ===== FOOTER ===== */
         .site-footer {
             text-align: center;
-            margin-top: 4rem;
-            padding-top: 2rem;
+            margin-top: 6rem;
+            padding-top: 3rem;
             border-top: 1px solid var(--color-border);
             color: var(--color-text-muted);
         }
@@ -1072,40 +660,688 @@
             flex-wrap: wrap;
         }
 
-        .footer-links a {
-            color: var(--color-text-muted);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: var(--color-primary);
-        }
-
-        /* ===== NOTIFICATION ===== */
-        .notification {
+        /* ===== DEMO MODAL ===== */
+        .modal {
+            display: none;
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--color-primary);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius-xl);
+            width: 100%;
+            max-width: 1400px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-deep);
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(50px) scale(0.95); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
             color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow-elevated);
-            z-index: 3000;
-            animation: slideIn 0.3s ease-out;
-            max-width: 300px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: var(--font-display);
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 0;
+        }
+
+        /* ===== DEMO GRID LAYOUT ===== */
+        .demo-modal-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 0;
+            height: 600px;
+        }
+
+        /* ===== DEMO CONTROLS ===== */
+        .demo-controls {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 2rem;
+            border-right: 1px solid var(--color-border);
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .controls-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .controls-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            font-family: var(--font-display);
+        }
+
+        .control-group {
+            margin-bottom: 2rem;
+            animation: slideIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .control-group:nth-child(2) { animation-delay: 0.1s; }
+        .control-group:nth-child(3) { animation-delay: 0.2s; }
+        .control-group:nth-child(4) { animation-delay: 0.3s; }
+        .control-group:nth-child(5) { animation-delay: 0.4s; }
+        .control-group:nth-child(6) { animation-delay: 0.5s; }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .demo-badge {
+            background: var(--color-accent);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* ===== COLOR PICKER ===== */
+        .color-options {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            position: relative;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-option.active {
+            border-color: white;
+            box-shadow: 0 0 0 3px var(--color-primary), 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .color-option.active::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
             font-size: 0.9rem;
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        /* ===== TOGGLE SWITCHES ===== */
+        .toggle-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: var(--border-radius-sm);
+            border: 2px solid var(--color-border);
+            transition: all 0.3s;
+        }
+
+        .toggle-item:hover {
+            border-color: var(--color-accent);
+            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.1);
+        }
+
+        .toggle-switch {
+            width: 60px;
+            height: 32px;
+            background: #cbd5e1;
+            border-radius: 16px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch.active {
+            background: var(--color-success);
+        }
+
+        .toggle-slider {
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(28px);
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .toggle-description {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* ===== PRICE CONTROLS ===== */
+        .price-controls {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: 1.5rem;
+            border: 2px solid var(--color-border);
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .price-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .price-label {
+            flex: 1;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .price-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .price-btn {
+            width: 36px;
+            height: 36px;
+            border: 2px solid var(--color-border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--color-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .price-btn:hover {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .price-display {
+            min-width: 100px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--color-primary);
+            font-size: 1.2rem;
+        }
+
+        /* ===== DEMO PREVIEW ===== */
+        .demo-preview {
+            padding: 2rem;
+            background: white;
+            overflow-y: auto;
+            height: 600px;
+            position: relative;
+        }
+
+        .preview-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            min-height: 500px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .preview-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-header::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .preview-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-logo {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .preview-name {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0;
+            font-family: var(--font-display);
+        }
+
+        .preview-title {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .preview-content {
+            padding: 2rem;
+        }
+
+        /* ===== VIDEO SECTION ===== */
+        .video-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 2px dashed var(--color-border);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .video-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--color-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .video-preview {
+            background: #333;
+            border-radius: 8px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-preview::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(124, 58, 237, 0.3), rgba(59, 130, 246, 0.3));
+        }
+
+        /* ===== SESSION TYPES ===== */
+        .session-types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .session-card {
+            border: 2px solid var(--color-border);
+            border-radius: var(--border-radius);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            background: white;
+        }
+
+        .session-card:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.1);
+        }
+
+        .session-card.featured {
+            border-color: var(--color-accent);
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(124, 58, 237, 0.02));
+        }
+
+        .session-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-accent);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .session-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin: 0.5rem 0;
+        }
+
+        .session-price {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--color-primary);
+            margin: 0.5rem 0;
+            font-family: var(--font-display);
+        }
+
+        .session-price.free {
+            color: var(--color-success);
+        }
+
+        .session-duration {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .session-description {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin: 0;
+        }
+
+        /* ===== TESTIMONIALS PREVIEW ===== */
+        .testimonials-preview {
+            background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 4px solid #f59e0b;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .testimonial-text {
+            color: #92400e;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-author {
+            color: #92400e;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ===== PAYMENT PREVIEW ===== */
+        .payment-preview {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 2px solid #bae6fd;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .payment-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-icon {
+            width: 48px;
+            height: 48px;
+            background: #3b82f6;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .payment-details {
+            background: white;
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .payment-row.total {
+            border-top: 2px solid #e2e8f0;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            font-weight: 700;
+        }
+
+        /* ===== TIME SLOTS ===== */
+        .time-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .time-slot {
+            padding: 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .time-slot:hover {
+            border-color: var(--color-accent);
+            background: rgba(124, 58, 237, 0.05);
+        }
+
+        .time-slot.selected {
+            background: var(--color-accent);
+            color: white;
+            border-color: var(--color-accent);
+        }
+
+        /* ===== CTA BUTTON ===== */
+        .preview-cta {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+        }
+
+        /* ===== DEMO FOOTER ===== */
+        .demo-footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+        }
+
+        .demo-notice {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #fcd34d;
+            border-radius: 100px;
+            padding: 1rem 2rem;
+            color: #92400e;
+            font-weight: 600;
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-bar {
+            height: 4px;
+            background: var(--color-border);
+            border-radius: 2px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-accent-light));
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 2px;
         }
     </style>
 </head>
@@ -1118,12 +1354,12 @@
                     <i class="fas fa-crown"></i>
                 </div>
                 <div class="logo-text">
-                    <div class="logo">KAIROS<span class="accent">.</span></div>
+                    <div class="logo">KAIROS</div>
                     <div class="tagline">TIME. ELEVATED.</div>
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="showDemoModal()">
-                <i class="fas fa-play-circle"></i> Experience Demo
+            <button class="btn btn-secondary" onclick="showDemoModal()">
+                <i class="fas fa-play-circle"></i> Experience Interactive Demo
             </button>
         </div>
     </header>
@@ -1132,617 +1368,472 @@
     <section class="hero">
         <div class="container">
             <div class="hero-badge">
-                <i class="fas fa-crown"></i> FOR ELITE CONSULTANTS & COACHES
+                <i class="fas fa-flask"></i> LIMITED BETA FOR 50 FOUNDING CONSULTANTS
             </div>
             
-            <h1>Your Booking Page Should <span style="color: var(--color-accent);">Close Deals</span><br>Not Just Schedule Time</h1>
+            <h1>Transform Your Booking Page Into A <span style="color: var(--color-accent);">Client Conversion Machine</span></h1>
             
             <p class="hero-subtitle">
-                While Calendly makes you look generic, Kairos makes you look premium. 
-                <strong>Convert more high-value clients</strong> with a booking experience 
-                that matches your expertise and rates.
+                Kairos is the premium booking engine built exclusively for consultants who charge $500+/hour. 
+                Join our beta program and get lifetime access to the tool that makes you look as premium as you are.
             </p>
             
             <div class="hero-actions">
-                <button class="btn btn-primary btn-lg" onclick="document.getElementById('waitlistForm').scrollIntoView({behavior: 'smooth'})">
-                    <i class="fas fa-rocket"></i> Join Waitlist - Get 40% Off
+                <button class="btn btn-primary btn-xl" onclick="document.getElementById('betaOffer').scrollIntoView({behavior: 'smooth'})">
+                    <i class="fas fa-rocket"></i> Join Beta Program - $497
                 </button>
                 <button class="btn btn-secondary btn-lg" onclick="showDemoModal()">
-                    <i class="fas fa-play-circle"></i> See Live Demo
+                    <i class="fas fa-magic"></i> Try Interactive Demo
                 </button>
             </div>
-            
-            <!-- Value Banner -->
-            <div class="value-banner mt-3">
-                <div class="value-item">
-                    <div class="value-number">$500+</div>
-                    <div class="value-label">Average Client Rate</div>
-                </div>
-                <div class="value-item">
-                    <div class="value-number">89%</div>
-                    <div class="value-label">Fewer No-Shows</div>
-                </div>
-                <div class="value-item">
-                    <div class="value-number">4.9★</div>
-                    <div class="value-label">Average Rating</div>
-                </div>
-                <div class="value-item">
-                    <div class="value-number">2.3x</div>
-                    <div class="value-label">ROI in 90 Days</div>
-                </div>
-            </div>
         </div>
     </section>
 
-    <!-- Social Proof Banner -->
-    <div class="container">
-        <div class="social-proof-banner">
-            <div class="social-proof-item">
-                <i class="fas fa-check-circle"></i>
-                <span><strong>Trusted by consultants</strong> at Google, Slack, Spotify</span>
-            </div>
-            <div class="social-proof-item">
-                <i class="fas fa-star"></i>
-                <span>Rated <strong>4.9/5 stars</strong> by premium consultants</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- The Kairos Difference -->
-    <section class="container">
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon purple">
-                    <i class="fas fa-filter"></i>
-                </div>
-                <h3>Qualify Automatically</h3>
-                <p>Smart questions filter out tire-kickers before they book. Only serious clients reach your calendar.</p>
-            </div>
+    <!-- Beta Offer Card -->
+    <section class="container" id="betaOffer">
+        <div class="beta-offer-card">
+            <h2 class="text-center" style="font-size: 2.5rem; margin-bottom: 1rem;">
+                Join the Kairos Beta Program
+            </h2>
             
-            <div class="feature-card">
-                <div class="feature-icon green">
-                    <i class="fas fa-video"></i>
-                </div>
-                <h3>Showcase Your Brand</h3>
-                <p>Embed videos, testimonials, and content. Make every booking feel like entering your premium office.</p>
-            </div>
+            <p class="text-center" style="color: var(--color-text-muted); font-size: 1.1rem; margin-bottom: 2rem;">
+                Limited to 50 founding consultants. Get lifetime access at 50% off.
+            </p>
             
-            <div class="feature-card">
-                <div class="feature-icon orange">
-                    <i class="fas fa-handshake"></i>
+            <div class="text-center">
+                <div class="price-tag">
+                    $497
+                    <span class="original-price">$997</span>
                 </div>
-                <h3>Enforce Commitment</h3>
-                <p>Credit card holds for paid sessions eliminate no-shows. Protect your most valuable asset: time.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon blue">
-                    <i class="fas fa-money-bill-wave"></i>
-                </div>
-                <h3>Pay Once, Own Forever</h3>
-                <p>No subscriptions. One payment for lifetime access. Your tool, your rules.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Content -->
-    <main class="container">
-        <div class="content-wrapper">
-            <!-- Waitlist Form -->
-            <section class="waitlist-section">
-                <div class="text-center mb-3">
-                    <div class="hero-badge" style="background: var(--color-accent); margin-bottom: 1rem;">
-                        <i class="fas fa-crown"></i> FOUNDER'S OFFER
-                    </div>
-                    
-                    <h2 class="section-title">Get Lifetime Access for <span style="color: var(--color-accent);">40% Off</span></h2>
-                    
-                    <p class="section-subtitle">
-                        Join the first 500 consultants and get Kairos for <strong>$297 one-time</strong> 
-                        (normally $497). No subscriptions, no monthly fees.
-                    </p>
-                    
-                    <div style="
-                        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-                        border-radius: 12px;
-                        padding: 1.5rem;
-                        margin-bottom: 2rem;
-                        border: 1px solid #bae6fd;
-                    ">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-check-circle" style="color: #10b981;"></i>
-                                <span>Limited to 500 spots</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-check-circle" style="color: #10b981;"></i>
-                                <span>Lifetime updates included</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fas fa-check-circle" style="color: #10b981;"></i>
-                                <span>Priority support</span>
-                            </div>
-                        </div>
-                        <p style="color: #0369a1; font-weight: 600; margin: 0;">
-                            <i class="fas fa-bolt"></i> Launch discount ends when waitlist reaches 500
-                        </p>
-                    </div>
-                </div>
-
-                <!-- WAITLIST FORM - Replace with your Formspree ID -->
-                <form id="waitlistForm" action="https://formspree.io/f/mvgeqzja" method="POST">
-                    <div class="form-group">
-                        <label class="form-label" for="name">Full Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Alex Johnson">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="email">Professional Email *</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="alex@consultingfirm.com" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="website">Website / LinkedIn</label>
-                        <input type="url" class="form-control" id="website" name="website" placeholder="https://yourwebsite.com">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="currentTool">Current Booking Tool</label>
-                        <div class="select-wrapper">
-                            <select class="form-control" id="currentTool" name="current_tool">
-                                <option value="" selected>Select what you use now</option>
-                                <option value="calendly">Calendly</option>
-                                <option value="acuity">Acuity Scheduling</option>
-                                <option value="youcanbook">YouCanBook.me</option>
-                                <option value="google">Google Calendar</option>
-                                <option value="other">Other / None</option>
-                            </select>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="clientRate">Average Client Rate</label>
-                        <div class="select-wrapper">
-                            <select class="form-control" id="clientRate" name="client_rate">
-                                <option value="" selected>Select your rate bracket</option>
-                                <option value="200">$200+/hour</option>
-                                <option value="500">$500+/hour</option>
-                                <option value="1000">$1,000+/hour</option>
-                                <option value="2500">$2,500+/project</option>
-                                <option value="5000">$5,000+/project</option>
-                            </select>
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="_subject" value="New Kairos Waitlist Signup">
-                    <input type="hidden" name="_replyto" id="replyTo" value="">
-                    <input type="text" name="_gotcha" style="display:none">
-
-                    <button type="submit" class="btn btn-primary btn-full">
-                        <i class="fas fa-star"></i> Join Waitlist & Get 40% Off
-                    </button>
-                </form>
-
-                <p class="text-center mt-2" style="color: var(--color-text-muted); font-size: 0.9rem;">
-                    <i class="fas fa-lock"></i> No spam. Unsubscribe anytime.
+                <p style="color: var(--color-success); font-weight: 600; font-size: 1.2rem; margin-top: 1rem;">
+                    <i class="fas fa-bolt"></i> 50% off launch price + lifetime updates included
                 </p>
-
-                <div class="text-center mt-3">
-                    <button class="btn btn-secondary btn-full" onclick="showDemoModal()">
-                        <i class="fas fa-play-circle"></i> See Full Interactive Demo First
-                    </button>
-                </div>
-            </section>
-
-            <!-- Demo Preview -->
-            <section class="demo-preview">
-                <div class="demo-header">
-                    <h3 class="demo-title">Interactive Demo Preview</h3>
-                    <span class="demo-badge">Live Simulation</span>
-                </div>
-
-                <div class="demo-placeholder">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h3 style="color: var(--color-primary); margin-bottom: 0.5rem;">Try the Premium Booking Experience</h3>
-                    <p>Experience what your high-value clients will see and interact with.</p>
-                    <button class="btn btn-primary mt-2" onclick="showDemoModal()">
-                        <i class="fas fa-play"></i> Launch Interactive Demo
-                    </button>
-                </div>
-
-                <h4 style="color: var(--color-primary); margin-bottom: 1rem;">What You Can Customize:</h4>
-                <ul class="demo-features">
-                    <li>
-                        <i class="fas fa-sliders-h"></i>
-                        <div>
-                            <strong>Unlimited Session Types</strong>
-                            <div style="font-size: 0.9rem; color: var(--color-text-muted);">Intro, Strategy, VIP, Workshops, Retainers</div>
-                        </div>
-                    </li>
-                    <li>
-                        <i class="fas fa-paint-brush"></i>
-                        <div>
-                            <strong>Complete Brand Control</strong>
-                            <div style="font-size: 0.9rem; color: var(--color-text-muted);">Colors, fonts, logos, videos, testimonials</div>
-                        </div>
-                    </li>
-                    <li>
-                        <i class="fas fa-cog"></i>
-                        <div>
-                            <strong>Smart Pricing Rules</strong>
-                            <div style="font-size: 0.9rem; color: var(--color-text-muted);">Dynamic pricing, packages, custom quotes</div>
-                        </div>
-                    </li>
-                    <li>
-                        <i class="fas fa-robot"></i>
-                        <div>
-                            <strong>AI-Powered Qualifying</strong>
-                            <div style="font-size: 0.9rem; color: var(--color-text-muted);">Smart questions that filter and pre-qualify</div>
-                        </div>
-                    </li>
-                </ul>
-            </section>
-        </div>
-
-        <!-- ROI Calculator -->
-        <div class="feature-card mt-3">
-            <div class="flex items-center gap-2 mb-2">
-                <i class="fas fa-calculator" style="color: var(--color-accent); font-size: 1.5rem;"></i>
-                <h3 style="margin: 0;">The Math That Matters</h3>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
-                <div>
-                    <h4 style="color: var(--color-primary); margin-bottom: 1rem;">With Kairos:</h4>
-                    <ul style="color: var(--color-text); padding-left: 1.5rem;">
-                        <li>Convert 42% more consultation requests</li>
-                        <li>Eliminate 15% no-show rate</li>
-                        <li>Save 5+ hours/month on admin</li>
-                        <li><strong>One-time $297 payment</strong></li>
-                    </ul>
+            
+            <div class="beta-stats">
+                <div class="stat-item">
+                    <div class="stat-number">50</div>
+                    <div class="stat-label">Total Spots</div>
                 </div>
-                <div>
-                    <h4 style="color: var(--color-primary); margin-bottom: 1rem;">Without Kairos:</h4>
-                    <ul style="color: var(--color-text); padding-left: 1.5rem;">
-                        <li>Generic booking experience</li>
-                        <li>High no-show rates</li>
-                        <li>Unqualified leads wasting time</li>
-                        <li><strong>Lost revenue from missed opportunities</strong></li>
-                    </ul>
+                <div class="stat-item">
+                    <div class="stat-number" id="spotsTaken">24</div>
+                    <div class="stat-label">Spots Taken</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="spotsLeft">26</div>
+                    <div class="stat-label">Spots Left</div>
                 </div>
             </div>
+            
+            <!-- Ko-fi Button -->
             <div class="text-center mt-3">
-                <p style="color: var(--color-success); font-weight: 600;">
-                    <i class="fas fa-chart-line"></i> Average ROI: 2.3x within 90 days
+                <a href="https://ko-fi.com/YOUR_USERNAME/tier/497000" 
+                   class="kofi-button" 
+                   target="_blank"
+                   id="kofiButton">
+                    <i class="fas fa-gem"></i>
+                    <span>Join Beta Program - $497</span>
+                </a>
+                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 1rem;">
+                    <i class="fas fa-lock"></i> Secure payment via Ko-fi • 14-day refund guarantee
+                </p>
+            </div>
+            
+            <div class="guarantee-badge">
+                <i class="fas fa-shield-alt fa-2x"></i>
+                <div>
+                    <strong style="font-size: 1.1rem;">14-Day Risk-Free Guarantee</strong><br>
+                    <small>Not satisfied? Full refund within 14 days, no questions asked.</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Grid -->
+    <section class="container">
+        <h2 class="text-center" style="font-size: 2.5rem; margin-bottom: 3rem;">
+            What Beta Members Receive
+        </h2>
+        
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <h3>Personal 1:1 Setup</h3>
+                <p>60-minute Zoom call where I personally set up your perfect booking page. No technical skills needed.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-infinity"></i>
+                </div>
+                <h3>Lifetime Access</h3>
+                <p>Pay once, own forever. No subscriptions. All future updates included at no extra cost.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>Priority Support</h3>
+                <p>Direct access to me for support. Jump to the front of the queue for all your questions.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-vote-yea"></i>
+                </div>
+                <h3>Shape the Product</h3>
+                <p>Your feedback directly shapes the roadmap. Build the features you actually need.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="container">
+        <div class="testimonials">
+            <h3 class="text-center" style="margin-bottom: 3rem; font-size: 2rem;">What Early Beta Members Say</h3>
+            
+            <div class="testimonial">
+                "I've been searching for a booking tool that doesn't make my $10,000 consulting packages look like dentist appointments. Kairos is exactly what I needed. The beta program was a no-brainer at $497."
+                <div class="testimonial-author">– Sarah Chen, Executive Coach ($750/hr)</div>
+            </div>
+            
+            <div class="testimonial mt-3">
+                "The personal setup call alone was worth the investment. I got my perfect booking page in 45 minutes. My clients now comment on how professional the booking experience feels."
+                <div class="testimonial-author">– Marcus Johnson, Scaling Consultant</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="container">
+        <div class="demo-section">
+            <div class="text-center mb-3">
+                <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">See Kairos in Action</h2>
+                <p style="color: var(--color-text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+                    Try our interactive demo to experience the powerful customization options available.
+                </p>
+            </div>
+            
+            <div class="text-center mt-3">
+                <button class="btn btn-primary btn-xl" onclick="showDemoModal()">
+                    <i class="fas fa-magic"></i> Launch Interactive Demo
+                </button>
+                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 1rem;">
+                    Customize colors, pricing, features, and see live updates in the preview
                 </p>
             </div>
         </div>
-    </main>
+    </section>
+
+    <!-- FAQ -->
+    <section class="container">
+        <h2 class="text-center" style="font-size: 2.5rem; margin-bottom: 3rem;">Beta Program FAQ</h2>
+        
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div style="background: white; border-radius: var(--border-radius-lg); padding: 2.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-medium);">
+                <h4 style="color: var(--color-primary); margin-bottom: 1rem; font-size: 1.3rem;">What happens after I join the beta?</h4>
+                <p style="color: var(--color-text);">You'll immediately receive an email with access to a private portal. From there, you can schedule your 1-hour setup call. I'll personally build your booking page within 48 hours.</p>
+            </div>
+            
+            <div style="background: white; border-radius: var(--border-radius-lg); padding: 2.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-medium);">
+                <h4 style="color: var(--color-primary); margin-bottom: 1rem; font-size: 1.3rem;">Is the product fully built yet?</h4>
+                <p style="color: var(--color-text);">The core booking engine is complete and working. Some advanced features are in active development. As a beta member, you get early access to these features as they're released.</p>
+            </div>
+            
+            <div style="background: white; border-radius: var(--border-radius-lg); padding: 2.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-medium);">
+                <h4 style="color: var(--color-primary); margin-bottom: 1rem; font-size: 1.3rem;">What's your refund policy?</h4>
+                <p style="color: var(--color-text);">14-day money-back guarantee. If within 14 days you're not satisfied with Kairos, I'll refund your $497, no questions asked.</p>
+            </div>
+            
+            <div style="background: white; border-radius: var(--border-radius-lg); padding: 2.5rem; box-shadow: var(--shadow-medium);">
+                <h4 style="color: var(--color-primary); margin-bottom: 1rem; font-size: 1.3rem;">When will beta spots run out?</h4>
+                <p style="color: var(--color-text);">Only 50 spots total. Currently <strong id="spotsLeftText">26 spots left</strong>. When they're gone, beta closes and you'll have to wait for the public launch at $997.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="container" style="margin: 6rem auto 4rem;">
+        <div class="text-center">
+            <h2 style="font-size: 3rem; margin-bottom: 1.5rem; line-height: 1.1;">Ready to Transform Your<br>Booking Experience?</h2>
+            <p style="color: var(--color-text-muted); font-size: 1.2rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Join 24 other elite consultants who are already shaping the future of premium booking.
+            </p>
+            
+            <a href="https://ko-fi.com/YOUR_USERNAME/tier/497000" 
+               class="kofi-button btn-xl" 
+               target="_blank"
+               style="font-size: 1.3rem; padding: 1.5rem 4rem; text-decoration: none;">
+                <i class="fas fa-gem"></i>
+                <span>Claim Your Beta Spot - $497</span>
+            </a>
+            
+            <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 1.5rem;">
+                <i class="fas fa-exclamation-triangle"></i> Beta closes when all 50 spots are filled
+            </p>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="site-footer">
         <div class="container">
-            <p>Kairos &copy; <span id="currentYear"></span>. The premium booking engine for elite consultants.</p>
+            <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Kairos Beta Program &copy; <span id="currentYear"></span>. Limited to 50 founding consultants.</p>
             <div class="footer-links">
                 <a href="#" onclick="showDemoModal()">Interactive Demo</a>
                 <a href="mailto:hello@kairos.example">Contact</a>
-                <a href="#">Privacy</a>
+                <a href="#">Refund Policy</a>
                 <a href="#">Terms</a>
             </div>
-            <p class="mt-2" style="font-size: 0.8rem; color: var(--color-text-muted);">
-                This is a validation page for a premium Calendly alternative. Not a real product yet.
+            <p class="mt-2" style="font-size: 0.9rem; color: var(--color-text-muted);">
+                This is a beta program. Features are in active development.
             </p>
         </div>
     </footer>
 
-    <!-- Enhanced Demo Modal -->
+    <!-- Interactive Demo Modal -->
     <div id="demoModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Interactive Demo: Client Booking Experience</h3>
+                <h3 class="modal-title">Interactive Kairos Demo</h3>
                 <button class="modal-close" onclick="closeDemoModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <!-- Demo Notice -->
-                <div class="demo-notice">
-                    <div class="demo-notice-icon">
-                        <i class="fas fa-info-circle"></i>
-                    </div>
-                    <h4 style="color: #92400e; margin-bottom: 0.5rem;">Interactive Simulation</h4>
-                    <p style="color: #92400e;">This is a demo showing what your clients would experience. To get your own Kairos booking page, <strong>join the waitlist above</strong>.</p>
-                </div>
-
-                <!-- Demo Steps -->
-                <div class="demo-steps">
-                    <div class="step active" id="step1">
-                        <div class="step-icon">1</div>
-                        <div class="step-label">Select Session</div>
-                    </div>
-                    <div class="step" id="step2">
-                        <div class="step-icon">2</div>
-                        <div class="step-label">Pick Date & Time</div>
-                    </div>
-                    <div class="step" id="step3">
-                        <div class="step-icon">3</div>
-                        <div class="step-label">Your Details</div>
-                    </div>
-                    <div class="step" id="step4">
-                        <div class="step-icon">4</div>
-                        <div class="step-label">Confirm</div>
-                    </div>
-                </div>
-
-                <!-- Step 1: Session Selection -->
-                <div id="step1Content" class="demo-step-content">
-                    <div class="text-center mb-3">
-                        <h3 style="color: var(--color-primary); margin-bottom: 0.5rem;">Book a Session with Jane Doe</h3>
-                        <p style="color: var(--color-text-muted);">Executive Coach & Scaling Expert • Former Google Executive</p>
-                    </div>
-
-                    <div class="session-types">
-                        <div class="session-type" data-type="intro" onclick="selectSessionType('intro')">
-                            <div class="session-badge">MOST POPULAR</div>
-                            <h4>Discovery Call</h4>
-                            <div class="session-price free">FREE</div>
-                            <p class="session-duration">15 minutes</p>
-                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">Quick intro to explore fit</p>
-                        </div>
-                        
-                        <div class="session-type featured selected" data-type="strategy" onclick="selectSessionType('strategy')">
-                            <div class="session-badge popular">RECOMMENDED</div>
-                            <h4>Strategy Session</h4>
-                            <div class="session-price">$1,250</div>
-                            <p class="session-duration">60 minutes</p>
-                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">Deep dive with action plan</p>
-                        </div>
-                        
-                        <div class="session-type" data-type="vip" onclick="selectSessionType('vip')">
-                            <h4>VIP Day</h4>
-                            <div class="session-price">$8,500</div>
-                            <p class="session-duration">Full Day</p>
-                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">Intensive transformation</p>
-                        </div>
-                        
-                        <div class="session-type" data-type="retainer" onclick="selectSessionType('retainer')">
-                            <h4>Retainer</h4>
-                            <div class="session-price">Custom</div>
-                            <p class="session-duration">Monthly</p>
-                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">Ongoing partnership</p>
-                        </div>
-                    </div>
-
-                    <div class="customization-preview">
-                        <div class="preview-header">
-                            <h4 style="color: var(--color-primary);">Customize Your Pricing</h4>
-                            <small style="color: var(--color-text-muted);">(Live demo of Kairos flexibility)</small>
-                        </div>
-                        
-                        <div class="customization-option">
-                            <div class="option-toggle active" onclick="toggleCustomPricing(this)"></div>
+                <div class="demo-modal-grid">
+                    <!-- Left: Controls Panel -->
+                    <div class="demo-controls">
+                        <div class="controls-header">
                             <div>
-                                <strong>Dynamic Pricing</strong>
-                                <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.25rem;">
-                                    <span id="priceDisplay">Strategy: $1,250 • VIP: $8,500</span>
+                                <h4 class="controls-title">Customization Panel</h4>
+                                <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+                                    Toggle features and see live updates
                                 </p>
                             </div>
+                            <span class="demo-badge">INTERACTIVE</span>
                         </div>
-                        
-                        <div class="customization-option">
-                            <div class="option-toggle active" onclick="toggleVideoEmbed(this)"></div>
-                            <div>
-                                <strong>Video Introduction</strong>
-                                <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.25rem;">
-                                    <span id="videoStatus">Embedded (increases conversion by 65%)</span>
-                                </p>
+
+                        <!-- Progress Bar -->
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="demoProgress"></div>
+                        </div>
+
+                        <!-- Color Theme Selector -->
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Brand Colors</span>
                             </div>
-                        </div>
-                        
-                        <div class="customization-option">
-                            <div class="option-toggle" onclick="togglePaymentIntegration(this)"></div>
-                            <div>
-                                <strong>Payment Integration</strong>
-                                <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.25rem;">
-                                    <span id="paymentStatus">Disabled - Enable to accept payments upfront</span>
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <div class="customization-option">
-                            <div class="option-toggle active" onclick="toggleQualifyingQuestions(this)"></div>
-                            <div>
-                                <strong>Smart Qualifying Questions</strong>
-                                <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.25rem;">
-                                    <span id="questionsStatus">Active - Filters unqualified leads</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-primary btn-full mt-3" onclick="goToStep(2)">
-                        Next: Choose Date & Time <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-
-                <!-- Step 2: Calendar Selection -->
-                <div id="step2Content" class="demo-step-content hidden">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 style="color: var(--color-primary);">Select Date & Time</h3>
-                        <div>
-                            <small style="color: var(--color-text-muted);">Selected: </small>
-                            <strong id="selectedSessionDisplay">Strategy Session ($1,250)</strong>
-                        </div>
-                    </div>
-
-                    <div class="calendar-simulation">
-                        <div class="calendar-header">
-                            <button class="calendar-nav-btn" onclick="changeMonth(-1)">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <div class="calendar-month" id="currentMonth">March 2025</div>
-                            <button class="calendar-nav-btn" onclick="changeMonth(1)">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-
-                        <div class="calendar-grid">
-                            <div class="calendar-day-header">Sun</div>
-                            <div class="calendar-day-header">Mon</div>
-                            <div class="calendar-day-header">Tue</div>
-                            <div class="calendar-day-header">Wed</div>
-                            <div class="calendar-day-header">Thu</div>
-                            <div class="calendar-day-header">Fri</div>
-                            <div class="calendar-day-header">Sat</div>
-
-                            <!-- Calendar days will be generated by JavaScript -->
-                            <div id="calendarDays"></div>
-                        </div>
-
-                        <div class="calendar-legend">
-                            <div class="legend-item">
-                                <div class="legend-color today"></div>
-                                <span>Today</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color available"></div>
-                                <span>Available</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color limited"></div>
-                                <span>Limited</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color booked"></div>
-                                <span>Booked</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h4 style="color: var(--color-primary); margin-bottom: 1rem;">Available Time Slots</h4>
-                    <div class="time-slots" id="timeSlots">
-                        <!-- Time slots will be generated by JavaScript -->
-                    </div>
-
-                    <div class="flex gap-4 mt-3">
-                        <button class="btn btn-secondary flex-1" onclick="goToStep(1)">
-                            <i class="fas fa-arrow-left"></i> Back
-                        </button>
-                        <button class="btn btn-primary flex-1" onclick="goToStep(3)">
-                            Next: Your Details <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Step 3: Client Details -->
-                <div id="step3Content" class="demo-step-content hidden">
-                    <h3 style="color: var(--color-primary); margin-bottom: 1.5rem;">Your Information</h3>
-
-                    <!-- DEMO BOOKING FORM - Replace with your second Formspree ID -->
-                    <form id="demoBookingForm" action="https://formspree.io/f/{YOUR-DEMO-FORM-ID-HERE}" method="POST">
-                        <div class="mb-2">
-                            <label class="form-label">Session Type</label>
-                            <div style="background: var(--color-light); padding: 1rem; border-radius: 8px;">
-                                <strong id="finalSessionType">Strategy Session - $1,250</strong>
+                            <div class="color-options">
+                                <div class="color-option active" style="background: #7c3aed;" onclick="changeTheme('purple')" data-color="purple"></div>
+                                <div class="color-option" style="background: #0f766e;" onclick="changeTheme('teal')" data-color="teal"></div>
+                                <div class="color-option" style="background: #dc2626;" onclick="changeTheme('red')" data-color="red"></div>
+                                <div class="color-option" style="background: #059669;" onclick="changeTheme('green')" data-color="green"></div>
+                                <div class="color-option" style="background: #d97706;" onclick="changeTheme('orange')" data-color="orange"></div>
                             </div>
                         </div>
 
-                        <div class="mb-2">
-                            <label class="form-label">Selected Date & Time</label>
-                            <div style="background: var(--color-light); padding: 1rem; border-radius: 8px;">
-                                <strong id="finalDateTime">Thursday, March 20, 2025 at 2:00 PM</strong>
+                        <!-- Feature Toggles -->
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Feature Controls</span>
+                            </div>
+                            <div class="toggle-group">
+                                <div class="toggle-item">
+                                    <div>
+                                        <div class="toggle-label">Video Introduction</div>
+                                        <div class="toggle-description">Embed a personal welcome video</div>
+                                    </div>
+                                    <div class="toggle-switch" onclick="toggleFeature('video')" id="videoToggle">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                                <div class="toggle-item">
+                                    <div>
+                                        <div class="toggle-label">Payment Integration</div>
+                                        <div class="toggle-description">Accept payments with Stripe</div>
+                                    </div>
+                                    <div class="toggle-switch active" onclick="toggleFeature('payment')" id="paymentToggle">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                                <div class="toggle-item">
+                                    <div>
+                                        <div class="toggle-label">Testimonials Display</div>
+                                        <div class="toggle-description">Show client testimonials</div>
+                                    </div>
+                                    <div class="toggle-switch active" onclick="toggleFeature('testimonials')" id="testimonialsToggle">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mb-2">
-                            <label class="form-label">Full Name *</label>
-                            <input type="text" class="form-control" name="client_name" placeholder="Your name" required>
+                        <!-- Price Controls -->
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Session Pricing</span>
+                            </div>
+                            <div class="price-controls">
+                                <div class="price-row">
+                                    <span class="price-label">Strategy Session</span>
+                                    <div class="price-input-group">
+                                        <button class="price-btn" onclick="adjustPrice('strategy', -100)">-</button>
+                                        <span class="price-display" id="strategyPrice">$1,250</span>
+                                        <button class="price-btn" onclick="adjustPrice('strategy', 100)">+</button>
+                                    </div>
+                                </div>
+                                <div class="price-row">
+                                    <span class="price-label">VIP Day</span>
+                                    <div class="price-input-group">
+                                        <button class="price-btn" onclick="adjustPrice('vip', -500)">-</button>
+                                        <span class="price-display" id="vipPrice">$8,500</span>
+                                        <button class="price-btn" onclick="adjustPrice('vip', 500)">+</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="mb-2">
-                            <label class="form-label">Email Address *</label>
-                            <input type="email" class="form-control" name="client_email" placeholder="you@company.com" required>
-                        </div>
-
-                        <div class="mb-2">
-                            <label class="form-label">Company</label>
-                            <input type="text" class="form-control" name="company" placeholder="Your company">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">What's your primary goal for this session? *</label>
-                            <textarea class="form-control" name="client_goal" rows="3" placeholder="Example: Scale my consulting business from $200k to $500k in the next 12 months..." required></textarea>
-                            <p class="fs-description" style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">
-                                This helps tailor our session to your most pressing challenge.
+                        <!-- Demo Info -->
+                        <div style="margin-top: 2rem; padding: 1.5rem; background: white; border-radius: var(--border-radius); border: 2px solid var(--color-border);">
+                            <h4 style="color: var(--color-primary); margin-bottom: 0.5rem; font-size: 1.1rem;">
+                                <i class="fas fa-info-circle"></i> This is an Interactive Demo
+                            </h4>
+                            <p style="color: var(--color-text-muted); font-size: 0.9rem; margin: 0;">
+                                Everything you customize here is exactly what you can control with your own Kairos booking page as a beta member.
                             </p>
                         </div>
+                    </div>
 
-                        <div style="background: #FFF8E1; border: 1px solid #FFD54F; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                            <div class="flex items-center gap-2 mb-2">
-                                <i class="fas fa-credit-card" style="color: #FF9800; font-size: 1.2rem;"></i>
-                                <h4 style="color: #5D4037; margin: 0;">Payment & Commitment</h4>
+                    <!-- Right: Live Preview -->
+                    <div class="demo-preview">
+                        <div class="preview-container" id="previewContainer">
+                            <!-- Preview Header -->
+                            <div class="preview-header" id="previewHeader">
+                                <div class="preview-brand">
+                                    <div class="preview-logo" id="previewLogo">KD</div>
+                                    <div>
+                                        <h3 class="preview-name" id="previewName">Jane Doe</h3>
+                                        <p class="preview-title" id="previewTitle">Executive Coach & Scaling Expert</p>
+                                    </div>
+                                </div>
                             </div>
-                            <p style="color: #5D4037; font-size: 0.95rem;">
-                                For paid sessions, Kairos can require a credit card hold (not charged) to protect both parties' time. This ensures commitment for high-value consultations.
-                            </p>
-                            <div class="flex items-center gap-2 mt-2">
-                                <div class="option-toggle active" onclick="toggleOption(this)"></div>
-                                <span style="color: #5D4037; font-size: 0.9rem;">Enable credit card hold for commitment</span>
+
+                            <!-- Preview Content -->
+                            <div class="preview-content">
+                                <!-- Video Section (Toggleable) -->
+                                <div class="video-section" id="videoSection" style="display: none;">
+                                    <div class="video-header">
+                                        <div class="video-icon">
+                                            <i class="fas fa-play"></i>
+                                        </div>
+                                        <div>
+                                            <h4 style="margin: 0; color: var(--color-primary);">Welcome Video</h4>
+                                            <p style="margin: 0; color: var(--color-text-muted); font-size: 0.9rem;">Get to know me before we meet</p>
+                                        </div>
+                                    </div>
+                                    <div class="video-preview">
+                                        <i class="fas fa-play-circle" style="font-size: 3rem; opacity: 0.8; z-index: 2; position: relative;"></i>
+                                        <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; z-index: 2;">
+                                            2:30
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Session Types -->
+                                <div style="margin-top: 1rem;">
+                                    <h3 style="color: var(--color-primary); margin-bottom: 1.5rem; font-size: 1.5rem;">Select Your Session</h3>
+                                    
+                                    <div class="session-types-grid">
+                                        <div class="session-card" onclick="selectSession('intro')">
+                                            <div class="session-badge">Most Popular</div>
+                                            <div class="session-name">Discovery Call</div>
+                                            <div class="session-price free">FREE</div>
+                                            <div class="session-duration">15 minutes</div>
+                                            <div class="session-description">Quick introduction to explore fit</div>
+                                        </div>
+                                        
+                                        <div class="session-card featured" onclick="selectSession('strategy')">
+                                            <div class="session-badge">Recommended</div>
+                                            <div class="session-name">Strategy Session</div>
+                                            <div class="session-price" id="previewStrategyPrice">$1,250</div>
+                                            <div class="session-duration">60 minutes</div>
+                                            <div class="session-description">Deep dive with actionable plan</div>
+                                        </div>
+                                        
+                                        <div class="session-card" onclick="selectSession('vip')">
+                                            <div class="session-name">VIP Day</div>
+                                            <div class="session-price" id="previewVipPrice">$8,500</div>
+                                            <div class="session-duration">Full Day</div>
+                                            <div class="session-description">Intensive transformation session</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Testimonials (Toggleable) -->
+                                <div class="testimonials-preview" id="testimonialsSection">
+                                    <div class="testimonial-text">
+                                        "Jane transformed our strategy in one session. The booking experience itself told me I was in good hands."
+                                    </div>
+                                    <div class="testimonial-author">
+                                        <i class="fas fa-star" style="color: #fbbf24;"></i> CEO, Tech Startup
+                                    </div>
+                                </div>
+
+                                <!-- Payment (Toggleable) -->
+                                <div class="payment-preview" id="paymentSection">
+                                    <div class="payment-header">
+                                        <div class="payment-icon">
+                                            <i class="fas fa-shield-alt"></i>
+                                        </div>
+                                        <div>
+                                            <h4 style="margin: 0; color: var(--color-primary);">Secure Booking</h4>
+                                            <p style="margin: 0; color: var(--color-text-muted); font-size: 0.9rem;">
+                                                Your time is protected with our commitment system
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="payment-details">
+                                        <div class="payment-row">
+                                            <span>Strategy Session</span>
+                                            <span id="previewPaymentPrice">$1,250</span>
+                                        </div>
+                                        <div class="payment-row">
+                                            <span>Duration</span>
+                                            <span>60 minutes</span>
+                                        </div>
+                                        <div class="payment-row total">
+                                            <span>Total</span>
+                                            <span id="previewTotalPrice">$1,250</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Time Selection -->
+                                <div style="margin-top: 2rem;">
+                                    <h4 style="color: var(--color-primary); margin-bottom: 1rem;">Select Your Time</h4>
+                                    <div class="time-slots-grid" id="timeSlots">
+                                        <!-- Time slots will be generated here -->
+                                    </div>
+                                </div>
+
+                                <!-- CTA Button -->
+                                <div class="preview-cta">
+                                    <button class="cta-button" onclick="showBookingConfirmation()">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <span>Book Strategy Session</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <input type="hidden" name="_subject" value="Demo Booking Submission">
-                        <input type="text" name="_gotcha" style="display:none">
-
-                        <div class="flex gap-4">
-                            <button type="button" class="btn btn-secondary flex-1" onclick="goToStep(2)">
-                                <i class="fas fa-arrow-left"></i> Back
-                            </button>
-                            <button type="submit" class="btn btn-primary flex-1">
-                                <i class="fas fa-calendar-check"></i> Confirm Booking
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Step 4: Confirmation -->
-                <div id="step4Content" class="demo-step-content hidden">
-                    <div class="text-center" style="padding: 2rem 1rem;">
-                        <div style="width: 80px; height: 80px; background: var(--color-success); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 2rem;">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        
-                        <h3 style="color: var(--color-primary); margin-bottom: 1rem;">Booking Confirmed!</h3>
-                        
-                        <div style="background: var(--color-light); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; text-align: left;">
-                            <div class="flex justify-between mb-2">
-                                <span style="color: var(--color-text-muted);">Session:</span>
-                                <strong id="confirmationSession">Strategy Session</strong>
-                            </div>
-                            <div class="flex justify-between mb-2">
-                                <span style="color: var(--color-text-muted);">Date & Time:</span>
-                                <strong id="confirmationDateTime">Thursday, March 20, 2025 at 2:00 PM</strong>
-                            </div>
-                            <div class="flex justify-between">
-                                <span style="color: var(--color-text-muted);">Amount:</span>
-                                <strong id="confirmationAmount">$1,250</strong>
+                        <!-- Demo Footer -->
+                        <div class="demo-footer">
+                            <div class="demo-notice">
+                                <i class="fas fa-magic"></i>
+                                <span>Live Preview: All changes update in real-time</span>
                             </div>
                         </div>
-                        
-                        <p style="color: var(--color-text-muted); margin-bottom: 2rem;">
-                            A confirmation email with preparation materials has been sent to your inbox.
-                        </p>
-                        
-                        <div class="demo-notice" style="margin-bottom: 2rem;">
-                            <h4 style="color: #92400e; margin-bottom: 0.5rem;">This Was a Simulation</h4>
-                            <p style="color: #92400e;">You just experienced what your clients would see with Kairos. To get your own premium booking page:</p>
-                            <button class="btn btn-primary mt-2" onclick="closeDemoModal()">
-                                Join the Kairos Waitlist
-                            </button>
-                        </div>
-                        
-                        <button class="btn btn-secondary" onclick="restartDemo()">
-                            <i class="fas fa-redo"></i> Try Another Simulation
-                        </button>
                     </div>
                 </div>
             </div>
@@ -1750,412 +1841,477 @@
     </div>
 
     <script>
-        // ===== DEMO STATE MANAGEMENT =====
-        let currentStep = 1;
-        let selectedSession = {
-            type: 'strategy',
-            name: 'Strategy Session',
-            price: '$1,250',
-            duration: '60 minutes'
+        // ===== GLOBAL STATE =====
+        let demoState = {
+            theme: 'purple',
+            features: {
+                video: false,
+                payment: true,
+                testimonials: true
+            },
+            prices: {
+                strategy: 1250,
+                vip: 8500
+            },
+            selectedSession: 'strategy',
+            selectedTime: null,
+            progress: 25
         };
-        let selectedDate = null;
-        let selectedTime = null;
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
 
-        // ===== FORM HANDLING =====
-        document.getElementById('waitlistForm').addEventListener('submit', function(e) {
-            const email = document.getElementById('email').value;
-            document.getElementById('replyTo').value = email;
-            console.log('Waitlist form submitted to Formspree');
-        });
+        // ===== THEME SYSTEM =====
+        const themes = {
+            purple: { primary: '#7c3aed', light: '#8b5cf6', name: 'Purple Majesty' },
+            teal: { primary: '#0f766e', light: '#0d9488', name: 'Deep Teal' },
+            red: { primary: '#dc2626', light: '#ef4444', name: 'Crimson Red' },
+            green: { primary: '#059669', light: '#10b981', name: 'Emerald Green' },
+            orange: { primary: '#d97706', light: '#f59e0b', name: 'Amber Orange' }
+        };
 
-        // ===== MODAL FUNCTIONS =====
-        function showDemoModal() {
-            document.getElementById('demoModal').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            restartDemo();
+        function changeTheme(theme) {
+            demoState.theme = theme;
+            const colors = themes[theme];
+            
+            // Update CSS variables
+            document.documentElement.style.setProperty('--color-accent', colors.primary);
+            document.documentElement.style.setProperty('--color-accent-light', colors.light);
+            
+            // Update preview header
+            const header = document.getElementById('previewHeader');
+            header.style.background = `linear-gradient(135deg, ${colors.primary}, ${colors.light})`;
+            
+            // Update active color option
+            document.querySelectorAll('.color-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            document.querySelector(`.color-option[data-color="${theme}"]`).classList.add('active');
+            
+            // Update progress
+            updateProgress(5);
+            updateDemoStats();
         }
 
-        function closeDemoModal() {
-            document.getElementById('demoModal').style.animation = 'modalSlideOut 0.3s ease-out';
-            setTimeout(() => {
-                document.getElementById('demoModal').style.display = 'none';
-                document.getElementById('demoModal').style.animation = '';
-                document.body.style.overflow = 'auto';
-            }, 300);
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('demoModal');
-            if (event.target === modal) {
-                closeDemoModal();
+        // ===== FEATURE TOGGLES =====
+        function toggleFeature(feature) {
+            demoState.features[feature] = !demoState.features[feature];
+            const toggle = document.getElementById(`${feature}Toggle`);
+            const section = document.getElementById(`${feature}Section`);
+            
+            toggle.classList.toggle('active');
+            
+            if (demoState.features[feature]) {
+                section.style.display = 'block';
+                section.style.animation = 'slideIn 0.5s ease-out';
+            } else {
+                section.style.display = 'none';
             }
-        };
+            
+            updateProgress(5);
+            updateDemoStats();
+        }
 
-        // ===== SESSION TYPE SELECTION =====
-        function selectSessionType(type) {
-            const sessions = {
-                'intro': { name: 'Discovery Call', price: 'FREE', duration: '15 minutes' },
-                'strategy': { name: 'Strategy Session', price: '$1,250', duration: '60 minutes' },
-                'vip': { name: 'VIP Day', price: '$8,500', duration: 'Full Day' },
-                'retainer': { name: 'Retainer', price: 'Custom Quote', duration: 'Monthly' }
-            };
+        // ===== PRICE CONTROLS =====
+        function adjustPrice(type, amount) {
+            if (type === 'strategy') {
+                demoState.prices.strategy = Math.max(500, demoState.prices.strategy + amount);
+                document.getElementById('strategyPrice').textContent = formatPrice(demoState.prices.strategy);
+                document.getElementById('previewStrategyPrice').textContent = formatPrice(demoState.prices.strategy);
+                document.getElementById('previewPaymentPrice').textContent = formatPrice(demoState.prices.strategy);
+                document.getElementById('previewTotalPrice').textContent = formatPrice(demoState.prices.strategy);
+                
+                // Animation
+                const element = document.getElementById('previewStrategyPrice');
+                element.style.animation = 'none';
+                setTimeout(() => {
+                    element.style.animation = 'pulse 0.5s ease-out';
+                }, 10);
+            } else if (type === 'vip') {
+                demoState.prices.vip = Math.max(3000, demoState.prices.vip + amount);
+                document.getElementById('vipPrice').textContent = formatPrice(demoState.prices.vip);
+                document.getElementById('previewVipPrice').textContent = formatPrice(demoState.prices.vip);
+                
+                // Animation
+                const element = document.getElementById('previewVipPrice');
+                element.style.animation = 'none';
+                setTimeout(() => {
+                    element.style.animation = 'pulse 0.5s ease-out';
+                }, 10);
+            }
+            
+            updateProgress(3);
+            updateDemoStats();
+        }
 
-            selectedSession = {
-                type: type,
-                name: sessions[type].name,
-                price: sessions[type].price,
-                duration: sessions[type].duration
-            };
+        function formatPrice(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
 
+        // ===== SESSION SELECTION =====
+        function selectSession(type) {
+            demoState.selectedSession = type;
+            
             // Update UI
-            document.querySelectorAll('.session-type').forEach(el => {
-                el.classList.remove('selected');
+            document.querySelectorAll('.session-card').forEach(card => {
+                card.classList.remove('featured');
             });
-            document.querySelector(`.session-type[data-type="${type}"]`).classList.add('selected');
-
-            // Update display
-            document.getElementById('selectedSessionDisplay').textContent = 
-                `${selectedSession.name} (${selectedSession.price})`;
-            document.getElementById('finalSessionType').textContent = 
-                `${selectedSession.name} - ${selectedSession.price}`;
-        }
-
-        // ===== STEP NAVIGATION =====
-        function goToStep(step) {
-            // Hide all steps
-            document.querySelectorAll('.demo-step-content').forEach(el => {
-                el.classList.add('hidden');
-            });
-            document.querySelectorAll('.step').forEach(el => {
-                el.classList.remove('active');
-            });
-
-            // Show selected step
-            document.getElementById(`step${step}Content`).classList.remove('hidden');
-            document.getElementById(`step${step}`).classList.add('active');
-            currentStep = step;
-
-            // Special handling for step 2
-            if (step === 2) {
-                renderCalendar();
-                generateTimeSlots();
-            }
-
-            // Special handling for step 3
-            if (step === 3) {
-                updateConfirmationDetails();
-            }
-        }
-
-        // ===== ENHANCED CALENDAR FUNCTIONS =====
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"];
-
-        function renderCalendar() {
-            const firstDay = new Date(currentYear, currentMonth, 1);
-            const lastDay = new Date(currentYear, currentMonth + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            const startingDay = firstDay.getDay();
+            document.querySelector(`.session-card[onclick*="${type}"]`).classList.add('featured');
             
-            const today = new Date();
-            const isCurrentMonth = currentMonth === today.getMonth() && currentYear === today.getFullYear();
-
-            // Update month display
-            document.getElementById('currentMonth').textContent = 
-                `${monthNames[currentMonth]} ${currentYear}`;
-
-            // Generate calendar days
-            let calendarHTML = '';
-            
-            // Day headers
-            const dayHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-            dayHeaders.forEach(day => {
-                calendarHTML += `<div class="calendar-day-header">${day}</div>`;
-            });
-
-            // Previous month days
-            const prevMonthLastDay = new Date(currentYear, currentMonth, 0).getDate();
-            for (let i = 0; i < startingDay; i++) {
-                const day = prevMonthLastDay - startingDay + i + 1;
-                calendarHTML += `<div class="calendar-day other-month">${day}</div>`;
-            }
-
-            // Current month days
-            for (let day = 1; day <= daysInMonth; day++) {
-                const date = new Date(currentYear, currentMonth, day);
-                const dayOfWeek = date.getDay();
-                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-                const isToday = isCurrentMonth && day === today.getDate();
-                const isPast = date < today && !isToday;
-                
-                // More realistic booking pattern
-                let isBooked = false;
-                let isLimited = false;
-                
-                if (day > 10 && day < 20) {
-                    // Middle of month has more bookings
-                    isBooked = Math.random() < 0.4;
-                    isLimited = Math.random() < 0.3;
-                } else if (day >= 20) {
-                    // End of month has moderate bookings
-                    isBooked = Math.random() < 0.25;
-                    isLimited = Math.random() < 0.4;
-                } else {
-                    // Beginning of month has fewer bookings
-                    isBooked = Math.random() < 0.15;
-                    isLimited = Math.random() < 0.2;
-                }
-                
-                const isAvailable = !isPast && !isBooked && !isWeekend && day > today.getDate();
-                
-                let dayClass = 'calendar-day';
-                if (isToday) dayClass += ' today';
-                if (isPast) dayClass += ' past';
-                if (isAvailable) dayClass += ' available';
-                if (isBooked) dayClass += ' booked';
-                if (isLimited) dayClass += ' limited';
-                if (selectedDate && selectedDate.getDate() === day && 
-                    selectedDate.getMonth() === currentMonth && 
-                    selectedDate.getFullYear() === currentYear) {
-                    dayClass += ' selected';
-                }
-
-                let dayContent = `<div class="day-number">${day}</div>`;
-                if (isBooked) dayContent += `<div class="day-status"><i class="fas fa-times"></i></div>`;
-                if (isLimited) dayContent += `<div class="day-status"><i class="fas fa-exclamation"></i></div>`;
-                if (isAvailable && !isWeekend) dayContent += `<div class="day-status"><i class="fas fa-check"></i></div>`;
-
-                calendarHTML += `<div class="${dayClass}" onclick="${isPast || isBooked ? '' : `selectDate(${day})`}">${dayContent}</div>`;
-            }
-
-            // Next month days
-            const totalCells = 42; // 6 rows * 7 days
-            const remainingCells = totalCells - (startingDay + daysInMonth);
-            for (let i = 1; i <= remainingCells; i++) {
-                calendarHTML += `<div class="calendar-day other-month">${i}</div>`;
-            }
-
-            document.getElementById('calendarDays').innerHTML = calendarHTML;
-        }
-
-        function changeMonth(delta) {
-            currentMonth += delta;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            } else if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
-            renderCalendar();
-        }
-
-        function selectDate(day) {
-            selectedDate = new Date(currentYear, currentMonth, day);
-            renderCalendar();
-            generateTimeSlots();
+            updateProgress(3);
+            updateDemoStats();
         }
 
         // ===== TIME SLOTS GENERATION =====
         function generateTimeSlots() {
-            if (!selectedDate) return;
+            const container = document.getElementById('timeSlots');
+            container.innerHTML = '';
+            
+            const now = luxon.DateTime.now();
+            const slots = [];
+            
+            // Generate slots for next 3 days
+            for (let day = 1; day <= 3; day++) {
+                const date = now.plus({ days: day });
+                const dayName = date.toFormat('EEE');
+                const dayNumber = date.toFormat('d');
+                const month = date.toFormat('MMM');
+                
+                for (let hour = 9; hour <= 17; hour += 2) {
+                    const timeString = `${hour}:00`;
+                    const displayTime = `${hour}:00 ${hour < 12 ? 'AM' : 'PM'}`;
+                    
+                    const slot = document.createElement('div');
+                    slot.className = 'time-slot';
+                    slot.innerHTML = `
+                        <div style="font-size: 0.9rem; font-weight: 600;">${dayName} ${dayNumber} ${month}</div>
+                        <div style="font-size: 1.1rem; font-weight: 700;">${displayTime}</div>
+                    `;
+                    
+                    slot.addEventListener('click', () => {
+                        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                        slot.classList.add('selected');
+                        demoState.selectedTime = `${dayName} ${dayNumber} ${month}, ${displayTime}`;
+                        updateProgress(5);
+                        updateDemoStats();
+                    });
+                    
+                    // Randomly mark some as booked
+                    if (Math.random() < 0.3) {
+                        slot.style.opacity = '0.5';
+                        slot.style.textDecoration = 'line-through';
+                        slot.style.cursor = 'not-allowed';
+                        slot.onclick = null;
+                    }
+                    
+                    slots.push(slot);
+                }
+            }
+            
+            // Add to container
+            slots.forEach(slot => container.appendChild(slot));
+            
+            // Select first available slot
+            const firstAvailable = container.querySelector('.time-slot:not([style*="opacity: 0.5"])');
+            if (firstAvailable) {
+                firstAvailable.click();
+            }
+        }
 
-            const timeSlots = [];
-            const baseHour = 9; // 9 AM
-            const slotsPerDay = 8;
+        // ===== PROGRESS SYSTEM =====
+        function updateProgress(increment) {
+            demoState.progress = Math.min(100, demoState.progress + increment);
+            document.getElementById('demoProgress').style.width = `${demoState.progress}%`;
+        }
 
-            for (let i = 0; i < slotsPerDay; i++) {
-                const hour = baseHour + i;
-                const timeString = `${hour}:00`;
-                const isBooked = Math.random() < 0.3; // 30% chance of being booked
-                const isSelected = selectedTime === timeString;
+        function updateDemoStats() {
+            console.log('Demo State:', demoState);
+            // You can add analytics tracking here
+        }
 
-                timeSlots.push(`
-                    <div class="time-slot ${isBooked ? 'booked' : ''} ${isSelected ? 'selected' : ''}" 
-                         onclick="${isBooked ? '' : `selectTime('${timeString}')`}">
-                        ${timeString} ${hour < 12 ? 'AM' : 'PM'}
+        // ===== BOOKING CONFIRMATION =====
+        function showBookingConfirmation() {
+            if (!demoState.selectedTime) {
+                alert('Please select a time slot first');
+                return;
+            }
+            
+            // Create confirmation modal
+            const confirmationHTML = `
+                <div style="text-align: center; padding: 3rem 2rem;">
+                    <div style="width: 100px; height: 100px; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; font-size: 3rem;">
+                        <i class="fas fa-check"></i>
                     </div>
-                `);
-            }
-
-            document.getElementById('timeSlots').innerHTML = timeSlots.join('');
-        }
-
-        function selectTime(time) {
-            selectedTime = time;
-            generateTimeSlots();
-        }
-
-        // ===== INTERACTIVE TOGGLE FUNCTIONS =====
-        function toggleCustomPricing(toggle) {
-            toggle.classList.toggle('active');
-            const sessionType = document.querySelector('.session-type.selected');
-            const priceElement = sessionType.querySelector('.session-price');
-            
-            if (toggle.classList.contains('active')) {
-                // Show higher "premium" pricing
-                if (sessionType.dataset.type === 'strategy') {
-                    priceElement.textContent = '$1,250';
-                    priceElement.classList.remove('free');
-                    document.getElementById('priceDisplay').textContent = 'Strategy: $1,250 • VIP: $8,500';
-                } else if (sessionType.dataset.type === 'vip') {
-                    priceElement.textContent = '$8,500';
-                    document.getElementById('priceDisplay').textContent = 'Strategy: $1,250 • VIP: $8,500';
-                }
-                showNotification('Dynamic pricing enabled - adjust rates based on demand');
-            } else {
-                // Show lower "standard" pricing
-                if (sessionType.dataset.type === 'strategy') {
-                    priceElement.textContent = '$997';
-                    document.getElementById('priceDisplay').textContent = 'Strategy: $997 • VIP: $6,500';
-                } else if (sessionType.dataset.type === 'vip') {
-                    priceElement.textContent = '$6,500';
-                    document.getElementById('priceDisplay').textContent = 'Strategy: $997 • VIP: $6,500';
-                }
-                showNotification('Dynamic pricing disabled - using standard rates');
-            }
-        }
-
-        function toggleVideoEmbed(toggle) {
-            toggle.classList.toggle('active');
-            const status = document.getElementById('videoStatus');
-            
-            if (toggle.classList.contains('active')) {
-                status.textContent = 'Embedded (increases conversion by 65%)';
-                showNotification('Video introduction enabled - clients see you before booking');
-            } else {
-                status.textContent = 'Disabled - add personal video greeting';
-                showNotification('Video introduction disabled');
-            }
-        }
-
-        function togglePaymentIntegration(toggle) {
-            toggle.classList.toggle('active');
-            const status = document.getElementById('paymentStatus');
-            
-            if (toggle.classList.contains('active')) {
-                status.textContent = 'Active - clients can pay immediately';
-                showNotification('Payment integration enabled - accept credit cards upfront');
-            } else {
-                status.textContent = 'Disabled - enable to accept payments upfront';
-                showNotification('Payment integration disabled');
-            }
-        }
-
-        function toggleQualifyingQuestions(toggle) {
-            toggle.classList.toggle('active');
-            const status = document.getElementById('questionsStatus');
-            
-            if (toggle.classList.contains('active')) {
-                status.textContent = 'Active - filters unqualified leads';
-                showNotification('Smart qualifying questions enabled - saves hours of unproductive calls');
-            } else {
-                status.textContent = 'Disabled - all leads can book';
-                showNotification('Qualifying questions disabled');
-            }
-        }
-
-        function toggleOption(element) {
-            element.classList.toggle('active');
-        }
-
-        // ===== NOTIFICATION SYSTEM =====
-        function showNotification(message) {
-            // Remove existing notifications
-            document.querySelectorAll('.notification').forEach(n => n.remove());
-            
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <i class="fas fa-check-circle"></i>
-                    <span>${message}</span>
+                    
+                    <h3 style="color: var(--color-primary); margin-bottom: 1rem; font-size: 2rem;">Booking Confirmed!</h3>
+                    
+                    <div style="background: #f8fafc; border-radius: var(--border-radius); padding: 2rem; margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <span style="color: var(--color-text-muted);">Session:</span>
+                            <span style="font-weight: 700; color: var(--color-primary);">Strategy Session</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <span style="color: var(--color-text-muted);">Date & Time:</span>
+                            <span style="font-weight: 700; color: var(--color-primary);">${demoState.selectedTime}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding-top: 1rem; border-top: 2px solid var(--color-border);">
+                            <span style="color: var(--color-text-muted);">Amount:</span>
+                            <span style="font-weight: 900; color: var(--color-primary); font-size: 1.5rem;">${formatPrice(demoState.prices.strategy)}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-radius: var(--border-radius); padding: 2rem; margin-bottom: 2rem; border: 2px solid #fcd34d;">
+                        <h4 style="color: #92400e; margin-bottom: 1rem; font-size: 1.3rem;">This Was a Simulation</h4>
+                        <p style="color: #92400e; margin-bottom: 1.5rem;">
+                            You just experienced what your clients will see. As a beta member, you get complete control over every aspect of this booking experience.
+                        </p>
+                        <a href="https://ko-fi.com/YOUR_USERNAME/tier/497000" 
+                           class="btn btn-primary" 
+                           target="_blank"
+                           style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-gem"></i>
+                            Join Beta Program - $497
+                        </a>
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="resetDemo()">
+                        <i class="fas fa-redo"></i> Try Another Simulation
+                    </button>
                 </div>
             `;
             
-            document.body.appendChild(notification);
+            const previewContent = document.querySelector('.preview-content');
+            previewContent.innerHTML = confirmationHTML;
             
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-out';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+            // Update progress to 100%
+            demoState.progress = 100;
+            document.getElementById('demoProgress').style.width = '100%';
         }
 
-        // ===== UPDATE CONFIRMATION DETAILS =====
-        function updateConfirmationDetails() {
-            if (selectedDate && selectedTime) {
-                const dateStr = selectedDate.toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
-                document.getElementById('finalDateTime').textContent = 
-                    `${dateStr} at ${selectedTime}`;
-                document.getElementById('confirmationDateTime').textContent = 
-                    `${dateStr} at ${selectedTime}`;
-            }
-
-            document.getElementById('confirmationSession').textContent = selectedSession.name;
-            document.getElementById('confirmationAmount').textContent = selectedSession.price;
-        }
-
-        // ===== RESTART DEMO =====
-        function restartDemo() {
-            selectedSession = {
-                type: 'strategy',
-                name: 'Strategy Session',
-                price: '$1,250',
-                duration: '60 minutes'
+        function resetDemo() {
+            // Reset state
+            demoState = {
+                theme: 'purple',
+                features: {
+                    video: false,
+                    payment: true,
+                    testimonials: true
+                },
+                prices: {
+                    strategy: 1250,
+                    vip: 8500
+                },
+                selectedSession: 'strategy',
+                selectedTime: null,
+                progress: 25
             };
-            selectedDate = null;
-            selectedTime = null;
-            currentMonth = new Date().getMonth();
-            currentYear = new Date().getFullYear();
-            goToStep(1);
+            
+            // Reset UI
+            changeTheme('purple');
+            
+            // Reset toggles
+            toggleFeature('video');
+            toggleFeature('payment');
+            toggleFeature('testimonials');
+            
+            // Reset prices
+            document.getElementById('strategyPrice').textContent = formatPrice(1250);
+            document.getElementById('vipPrice').textContent = formatPrice(8500);
+            
+            // Reset session selection
+            selectSession('strategy');
+            
+            // Regenerate time slots
+            setTimeout(() => {
+                const previewContent = document.querySelector('.preview-content');
+                previewContent.innerHTML = `
+                    <!-- Video Section -->
+                    <div class="video-section" id="videoSection" style="display: none;">
+                        <div class="video-header">
+                            <div class="video-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; color: var(--color-primary);">Welcome Video</h4>
+                                <p style="margin: 0; color: var(--color-text-muted); font-size: 0.9rem;">Get to know me before we meet</p>
+                            </div>
+                        </div>
+                        <div class="video-preview">
+                            <i class="fas fa-play-circle" style="font-size: 3rem; opacity: 0.8; z-index: 2; position: relative;"></i>
+                            <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; z-index: 2;">
+                                2:30
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Session Types -->
+                    <div style="margin-top: 1rem;">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1.5rem; font-size: 1.5rem;">Select Your Session</h3>
+                        
+                        <div class="session-types-grid">
+                            <div class="session-card" onclick="selectSession('intro')">
+                                <div class="session-badge">Most Popular</div>
+                                <div class="session-name">Discovery Call</div>
+                                <div class="session-price free">FREE</div>
+                                <div class="session-duration">15 minutes</div>
+                                <div class="session-description">Quick introduction to explore fit</div>
+                            </div>
+                            
+                            <div class="session-card featured" onclick="selectSession('strategy')">
+                                <div class="session-badge">Recommended</div>
+                                <div class="session-name">Strategy Session</div>
+                                <div class="session-price" id="previewStrategyPrice">$1,250</div>
+                                <div class="session-duration">60 minutes</div>
+                                <div class="session-description">Deep dive with actionable plan</div>
+                            </div>
+                            
+                            <div class="session-card" onclick="selectSession('vip')">
+                                <div class="session-name">VIP Day</div>
+                                <div class="session-price" id="previewVipPrice">$8,500</div>
+                                <div class="session-duration">Full Day</div>
+                                <div class="session-description">Intensive transformation session</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonials -->
+                    <div class="testimonials-preview" id="testimonialsSection">
+                        <div class="testimonial-text">
+                            "Jane transformed our strategy in one session. The booking experience itself told me I was in good hands."
+                        </div>
+                        <div class="testimonial-author">
+                            <i class="fas fa-star" style="color: #fbbf24;"></i> CEO, Tech Startup
+                        </div>
+                    </div>
+
+                    <!-- Payment -->
+                    <div class="payment-preview" id="paymentSection">
+                        <div class="payment-header">
+                            <div class="payment-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; color: var(--color-primary);">Secure Booking</h4>
+                                <p style="margin: 0; color: var(--color-text-muted); font-size: 0.9rem;">
+                                    Your time is protected with our commitment system
+                                </p>
+                            </div>
+                        </div>
+                        <div class="payment-details">
+                            <div class="payment-row">
+                                <span>Strategy Session</span>
+                                <span id="previewPaymentPrice">$1,250</span>
+                            </div>
+                            <div class="payment-row">
+                                <span>Duration</span>
+                                <span>60 minutes</span>
+                            </div>
+                            <div class="payment-row total">
+                                <span>Total</span>
+                                <span id="previewTotalPrice">$1,250</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Time Selection -->
+                    <div style="margin-top: 2rem;">
+                        <h4 style="color: var(--color-primary); margin-bottom: 1rem;">Select Your Time</h4>
+                        <div class="time-slots-grid" id="timeSlots"></div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="preview-cta">
+                        <button class="cta-button" onclick="showBookingConfirmation()">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Book Strategy Session</span>
+                        </button>
+                    </div>
+                `;
+                
+                // Regenerate time slots
+                generateTimeSlots();
+                
+                // Update preview prices
+                document.getElementById('previewStrategyPrice').textContent = formatPrice(demoState.prices.strategy);
+                document.getElementById('previewVipPrice').textContent = formatPrice(demoState.prices.vip);
+                document.getElementById('previewPaymentPrice').textContent = formatPrice(demoState.prices.strategy);
+                document.getElementById('previewTotalPrice').textContent = formatPrice(demoState.prices.strategy);
+            }, 100);
         }
 
-        // ===== FORM VALIDATION FOR DEMO =====
-        document.getElementById('demoBookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // ===== MODAL CONTROLS =====
+        function showDemoModal() {
+            document.getElementById('demoModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
             
-            const email = this.querySelector('input[name="client_email"]').value;
-            if (!email.includes('@')) {
-                alert('Please enter a valid email address.');
-                return false;
-            }
+            // Initialize demo
+            setTimeout(() => {
+                generateTimeSlots();
+                updateDemoStats();
+            }, 100);
+        }
 
-            // Show confirmation step
-            goToStep(4);
+        function closeDemoModal() {
+            document.getElementById('demoModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetDemo();
+        }
+
+        // ===== SPOT COUNTER =====
+        let spotsTaken = 24;
+        let totalSpots = 50;
+
+        function updateSpotCounter() {
+            document.getElementById('spotsTaken').textContent = spotsTaken;
+            document.getElementById('spotsLeft').textContent = totalSpots - spotsTaken;
+            document.getElementById('spotsLeftText').textContent = (totalSpots - spotsTaken) + ' spots left';
             
-            // In a real scenario, you would submit to Formspree here
-            // For demo purposes, we just show the confirmation
-            return false;
-        });
+            // Update Ko-fi button if sold out
+            const kofiButton = document.getElementById('kofiButton');
+            if (spotsTaken >= totalSpots) {
+                kofiButton.innerHTML = '<i class="fas fa-times"></i><span>Beta Program Full</span>';
+                kofiButton.style.background = '#64748b !important';
+                kofiButton.style.cursor = 'not-allowed !important';
+                kofiButton.onclick = function(e) {
+                    e.preventDefault();
+                    alert('Beta program is currently full. Join the waitlist for next opening.');
+                };
+            }
+        }
 
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function() {
-            // Set current year in footer
+            // Set current year
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             
-            // Initialize calendar
-            renderCalendar();
+            // Update spot counter
+            updateSpotCounter();
             
-            // Keyboard shortcuts for demo
+            // Simulate spot filling (remove in production)
+            setInterval(() => {
+                if (spotsTaken < totalSpots && Math.random() > 0.7) {
+                    spotsTaken++;
+                    updateSpotCounter();
+                }
+            }, 30000);
+            
+            // Initialize demo state
+            changeTheme('purple');
+            
+            // Close modal on outside click
+            window.addEventListener('click', function(event) {
+                if (event.target === document.getElementById('demoModal')) {
+                    closeDemoModal();
+                }
+            });
+            
+            // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     closeDemoModal();
                 }
             });
-            
-            // Initialize demo state
-            selectSessionType('strategy');
         });
     </script>
 </body>
